@@ -1,0 +1,19 @@
+{
+  "name": "flow-techdemo",
+  "version": "1.0.0",
+  "description": "Tech demo about static javascript typing with flow",
+  "main": "demo.js",
+  "scripts": {
+    "start": "babel-node demo.js"
+  },
+  "keywords": [
+    "flow",
+    "babel",
+    "static-typing"
+  ],
+  "author": "Mirko Grönroos <hermo@dmz.fi>",
+  "license": "ISC",
+  "devDependencies": {
+    "babel": "^5.8.23"
+  }
+}
