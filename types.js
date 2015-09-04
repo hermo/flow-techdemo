@@ -1,34 +1,36 @@
-type CartItem = {
+import I from 'immutable'
+
+type CartItem = I.Map<{
     pid: number,
     id: string,
     qty: number,
     name: string,
     price: number
-}
+}>
 
-type OrderInfo = {
+type OrderInfo = I.Map<{
     id: number,
     message: string
-}
+}>
 
-type OrderCart = Array<CartItem>
+type OrderCart = I.List<CartItem>
 
-type ProductStockItem = {
+type ProductStockItem = I.Map<{
     warehouse: string,
     quantity: number
-}
+}>
 
-type OrderAvailability = {
+type ProductAvailability = I.Map<{
     status: string,
-    stock: Array<ProductStockItem>
-}
+    stock: List<ProductStockItem>
+}>
 
-type Order = {
+type Order = I.Map<{
     info: OrderInfo,
     cart: OrderCart,
     availability: OrderAvailability,
-    total: number
-}
+    total?: number
+}>
 
 type LoadError = {
     status: number,

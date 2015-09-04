@@ -2,8 +2,10 @@
 
 import type {
     CartItem, callback, LoadError, OrderCart,
-    OrderInfo, Order, OrderAvailability
+    OrderInfo, Order, ProductAvailability
 } from './types'
+
+import I from 'immutable'
 
 // Generate dummy cart item
 function genCartItem():CartItem {
@@ -12,18 +14,15 @@ function genCartItem():CartItem {
         name = `Product ${id}`,
         qty = 1 + ~~(Math.random() * 5),
         price = (200 + ~~(Math.random() * 50000))/100
-    return { pid, id, name, qty, price }
+    return I.Map({ pid, id, name, qty, price })
 }
 
-// Generate dummy cart
-function genCart():Array<CartItem> {
-    var out = [],
-        size = 1 + ~~(Math.random() * 5)
 
-    for (var i=0; i < size; i++) {
-        out.push(genCartItem())
-    }
-    return out
+// Generate dummy cart
+function genCart():OrderCart {
+    return I.Range(1, 1 + ~~(Math.random() * 5))
+        .map(genCartItem)
+        .toList()
 }
 
 // Load order info from backend
@@ -32,7 +31,7 @@ function loadOrderInfo(orderId):Promise<OrderInfo> {
     return new Promise((resolve:callback<OrderInfo>, reject:callback<LoadError>) => {
         setTimeout(() => {
             if (Math.random() > 0.2)
-                resolve({id: orderId, message: 'Odottaa käsittelyä'})
+                resolve(I.Map({id: orderId, message: 'Odottaa käsittelyä'}))
             else
                 reject({status: 404, err: `Order ${orderId} not found`})
         }, 500)
@@ -47,39 +46,39 @@ function loadOrderCart(orderId):Promise<OrderCart> {
 
 // Calculate order total from cart
 function calculateOrderTotal(cart:OrderCart):number {
-    return cart.reduce((total, {price, qty})  => total + price * qty, 0)
+    return cart.reduce((total, item)  => total + item.get('price') * item.get('qty'), 0)
 }
 
 // Load order availability from backend
-function loadOrderAvailability(orderId):Promise<OrderAvailability> {
-    console.log('load availability...')
+function loadProductAvailability(pid):Promise<ProductAvailability> {
+    console.log('load availability...', pid)
     return new Promise((resolve) => {
-        resolve({
+        resolve(I.fromJS({
             status: 'varastossa ja myymälässä', stock: [
-                { warehouse: 'js_varasto', quantity: 42 },
-                { warehouse: 'js_myymala', quantity: 5 }
+                { warehouse: 'js_varasto', quantity: 1 + ~~(Math.random() * 10) },
+                { warehouse: 'js_myymala', quantity: 1 + ~~(Math.random() * 10) }
             ]
-        })
+        }))
     })
 }
 
 // Load individual order components in parallel
-function loadOrderComponents(orderId):Promise<[OrderInfo, OrderCart, OrderAvailability]> {
+function loadOrderComponents(orderId):Promise<[OrderInfo, OrderCart, ProductAvailability]> {
     return Promise.all([
         loadOrderInfo(orderId),
         loadOrderCart(orderId),
-        loadOrderAvailability(orderId)
+        loadProductAvailability(orderId)
     ])
 }
 
 // Combine individual order components into an Order
 function combineOrderComponents([orderInfo, orderCart, orderAvailability]):Order {
-    return {
+    return I.Map({
         info: orderInfo,
         cart: orderCart,
         availability: orderAvailability,
         total: calculateOrderTotal(orderCart)
-    }
+    })
 }
 // Load order
 function loadOrder(orderId):Promise<Order> {
@@ -88,9 +87,13 @@ function loadOrder(orderId):Promise<Order> {
 
 // Print out order breakdown
 function printOrderBreakdown(order:Order) {
-    console.dir(order.cart)
-    console.log('order total: ', order.total)
-    console.log('order availability: ', order.availability.status)
+    // FIXME: flow should complain about not checking that order.total is set
+    console.log('order total: ', order.get('total'), order.total)
+    console.log(order.get('cart').map((item) => {
+        var i:CartItem = item.toObject()
+        return `  ${i.id} (pid${i.pid}) x ${i.qty} @ ${i.price}`
+    }).join("\n"))
+    console.log('order availability: ', order.get('availability').get('status'))
 }
 
 function handleLoadError({status, err}:LoadError) {
