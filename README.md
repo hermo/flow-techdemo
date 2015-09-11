@@ -11,4 +11,17 @@ This is a contrived toy app which pretends to load an "order" from on
 online store in parallel and then combines the parts and prints out an
 order breakdown.
 
+# Running the demo
 
+Install flow. (brew install flow)
+
+Run ```flow```. It should report *"No Errors"*
+
+# Editor support & more
+
+Editor support is limited but Facebook has a
+[plugin](https://github.com/facebook/vim-flow) for Vim.
+
+[Babel](https://babeljs.io/) has native support for flow.
+
+[Flow playground](https://tryflow.org/)
