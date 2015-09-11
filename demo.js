@@ -81,14 +81,14 @@ function combineOrderComponents([orderInfo, orderCart, orderAvailability]):Order
         total: calculateOrderTotal(orderCart)
     }
 }
-// Load order
-function loadOrder(orderId):Promise<Order> {
-    return loadOrderComponents(orderId).then(combineOrderComponents)
-}
 
 // Print out order breakdown
 function printOrderBreakdown(order:Order) {
     console.dir(order.cart)
+    // Discount campaign!
+    // Uncomment and run flow
+    //var discountedTotal = order.total * 0.8
+    //console.log('order total: ', discountedTotal)
     console.log('order total: ', order.total)
     console.log('order availability: ', order.availability.status)
 }
@@ -97,6 +97,7 @@ function handleLoadError({status, err}:LoadError) {
     console.log("Load failed:", status, err)
 }
 
-loadOrder(123456)
+loadOrderComponents(123456)
+    .then(combineOrderComponents)
     .then(printOrderBreakdown)
     .catch(handleLoadError)

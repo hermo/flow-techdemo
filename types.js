@@ -1,4 +1,5 @@
-type CartItem = {
+/* @flow */
+export type CartItem = {
     pid: number,
     id: string,
     qty: number,
@@ -6,35 +7,34 @@ type CartItem = {
     price: number
 }
 
-type OrderInfo = {
+export type OrderInfo = {
     id: number,
     message: string
 }
 
-type OrderCart = Array<CartItem>
+export type OrderCart = Array<CartItem>
 
-type ProductStockItem = {
+export type ProductStockItem = {
     warehouse: string,
     quantity: number
 }
 
-type OrderAvailability = {
+export type OrderAvailability = {
     status: string,
     stock: Array<ProductStockItem>
 }
 
-type Order = {
+export type Order = {
     info: OrderInfo,
     cart: OrderCart,
     availability: OrderAvailability,
-    total: number
+    total?: number
 }
 
-type LoadError = {
+export type LoadError = {
     status: number,
     err: string
 }
 
-type callback<T> = (x: T) => void
-
+export type callback<T> = (x: T) => void
 
