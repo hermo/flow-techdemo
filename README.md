@@ -17,6 +17,8 @@ Install flow. (brew install flow)
 
 Run ```flow```. It should report *"No Errors"*
 
+Edit the code and introduce a typo like order.pricetotal and rerun flow.
+
 # Editor support & more
 
 Editor support is limited but Facebook has a
