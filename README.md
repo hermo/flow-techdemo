@@ -11,6 +11,12 @@ This is a contrived toy app which pretends to load an "order" from on
 online store in parallel and then combines the parts and prints out an
 order breakdown.
 
+Flow types are removed when compiling, they are only used for development.
+
+Babel can be used to remove flow types but nothing else:
+
+```babel -l flow demo.js > demo-plain.js```
+
 # Running the demo
 
 Install flow. (brew install flow)
